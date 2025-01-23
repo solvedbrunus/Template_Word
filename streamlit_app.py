@@ -77,26 +77,27 @@ def main():
     if not docx_imported:
         return
 
-    st.title("Word Template Filler")
+    st.title("Formulario de Preenchimento - Templates Word")
+    st.markdown("Escolher o ficheiro template onde campos {{placeholder}} estao inseridos, a aplicaçao extrai os campos após preencher os mesmos guarde o ficheiro preenchido.")
 
-    uploaded_file = st.file_uploader("Choose a Word template file", type="docx")
+    uploaded_file = st.file_uploader("Escolher o Documento Word", type="docx")
     if uploaded_file:
         doc = Document(uploaded_file)
         placeholders = extract_placeholders_in_order(doc)
 
         if placeholders:
-            st.write(f"Found {len(placeholders)} placeholders:")
+            st.write(f"Encontrados {len(placeholders)} espaços a preencher:")
             data = {}
             for placeholder in placeholders:
-                data[placeholder] = st.text_input(f"Value for {placeholder}")
+                data[placeholder] = st.text_input(f"Campo a preencher {placeholder}")
 
-            if st.button("Fill Template"):
+            if st.button("Criar Ficheiro"):
                 fill_template(doc, data)
                 buffer = BytesIO()
                 doc.save(buffer)
                 buffer.seek(0)
                 st.download_button(
-                    label="Download Filled Template",
+                    label="Download de Ficheiro",
                     data=buffer,
                     file_name="filled_template.docx",
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
