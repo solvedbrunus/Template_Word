@@ -78,7 +78,7 @@ def main():
         return
 
     st.title("Formulario de Preenchimento - Templates Word")
-    st.markdown("Escolher o ficheiro template onde campos {{placeholder}} estao inseridos, a aplicaçao extrai os campos após preencher os mesmos guarde o ficheiro preenchido.")
+    st.markdown("Escolher o ficheiro template onde campos {{placeholder}} estao inseridos, a aplicaçao extrai os campos a preencher. Preencha os campos e guarde o ficheiro preenchido.")
 
     uploaded_file = st.file_uploader("Escolher o Documento Word", type="docx")
     if uploaded_file:
