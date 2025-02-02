@@ -73,37 +73,80 @@ def fill_template(doc, data):
                 for key, value in data.items():
                     cell.text = cell.text.replace(key, value)
 
+def get_ui_text(language):
+    """
+    Get UI text based on selected language.
+    
+    Args:
+        language (str): Selected language ('en' or 'pt')
+        
+    Returns:
+        dict: Dictionary containing UI text in selected language
+    """
+    text = {
+        'en': {
+            'title': "Word Template Filling Form",
+            'description': "Choose a template file with {{placeholder}} fields, the application will extract the fields to fill. Fill in the fields and save the completed file.",
+            'choose_file': "Choose Word Document",
+            'fields_found': "Found {} fields to fill:",
+            'field_to_fill': "Field to fill",
+            'create_file': "Create File",
+            'download_file': "Download File",
+            'no_placeholders': "No placeholders found in the template."
+        },
+        'pt': {
+            'title': "Formulário de Preenchimento - Templates Word",
+            'description': "Escolher o ficheiro template onde campos {{placeholder}} estao inseridos, a aplicação extrai os campos a preencher. Preencha os campos e guarde o ficheiro preenchido.",
+            'choose_file': "Escolher o Documento Word",
+            'fields_found': "Encontrados {} espaços a preencher:",
+            'field_to_fill': "Campo a preencher",
+            'create_file': "Criar Ficheiro",
+            'download_file': "Download de Ficheiro",
+            'no_placeholders': "Não foram encontrados campos para preencher no template."
+        }
+    }
+    return text[language]
+
 def main():
     if not docx_imported:
         return
 
-    st.title("Formulario de Preenchimento - Templates Word")
-    st.markdown("Escolher o ficheiro template onde campos {{placeholder}} estao inseridos, a aplicaçao extrai os campos a preencher. Preencha os campos e guarde o ficheiro preenchido.")
+    # Language selection
+    language = st.selectbox(
+        "Select Language / Selecione o Idioma",
+        options=['en', 'pt'],
+        format_func=lambda x: "English" if x == 'en' else "Português"
+    )
+    
+    ui_text = get_ui_text(language)
+    
+    st.title(ui_text['title'])
+    st.markdown(ui_text['description'])
 
-    uploaded_file = st.file_uploader("Escolher o Documento Word", type="docx")
+    uploaded_file = st.file_uploader(ui_text['choose_file'], type="docx")
     if uploaded_file:
         doc = Document(uploaded_file)
         placeholders = extract_placeholders_in_order(doc)
 
         if placeholders:
-            st.write(f"Encontrados {len(placeholders)} espaços a preencher:")
+            st.write(ui_text['fields_found'].format(len(placeholders)))
             data = {}
             for placeholder in placeholders:
-                data[placeholder] = st.text_input(f"Campo a preencher {placeholder}")
+                data[placeholder] = st.text_input(f"{ui_text['field_to_fill']} {placeholder}")
 
-            if st.button("Criar Ficheiro"):
+            if st.button(ui_text['create_file']):
                 fill_template(doc, data)
                 buffer = BytesIO()
                 doc.save(buffer)
                 buffer.seek(0)
                 st.download_button(
-                    label="Download de Ficheiro",
+                    label=ui_text['download_file'],
                     data=buffer,
                     file_name="filled_template.docx",
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 )
         else:
-            st.write("No placeholders found in the template.")
+            st.write(ui_text['no_placeholders'])
 
 if __name__ == "__main__":
     main()
