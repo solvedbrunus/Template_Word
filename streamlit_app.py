@@ -278,7 +278,7 @@ def detect_document_type(doc):
         content += para.text.lower() + " "
     
     # Define document type patterns
-    if any(word in content for word in ["mediação", "imobiliária", "propriedad", "imóvel", "compra", "venda"]):
+    if any(word in content for word in ["mediação", "imobiliária", "propriedade", "imóvel", "compra", "venda"]):
         return "real_estate"
     elif any(word in content for word in ["trabalho", "emprego", "contrato de trabalho", "trabalhador", "empregador"]):
         return "labor"
